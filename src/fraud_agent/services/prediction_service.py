@@ -18,6 +18,7 @@ def prediction(transaction:TransactionInput):
 
     df[['Amount','Time']]=scaler.transform(df[['Amount','Time']])
 
+
     prediction=model.predict(df)[0]
     probability = model.predict_proba(df)[0][1]
 
@@ -29,6 +30,8 @@ def prediction(transaction:TransactionInput):
         risk_level = "LOW"
     
     return {
+    "Amount":transaction.Amount,
+    "Time": transaction.Time,
     "prediction": int(prediction),
     "fraud_probability": float(probability),
     "risk_level": risk_level,

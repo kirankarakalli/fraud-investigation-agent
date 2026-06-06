@@ -1,5 +1,6 @@
 from src.fraud_agent.services.prediction_service import prediction
 from src.fraud_agent.schemas.transaction_schema import TransactionInput
+from src.fraud_agent.services.llm_report_service import generate_llm_report
 
 def investigationReport(transaction:TransactionInput):
 
@@ -36,9 +37,20 @@ def investigationReport(transaction:TransactionInput):
             "recommended_action": "Approve transaction."
         }
     
-    return {
+    result= {
         **predict,
         **report
     }
+
+    llm_report=generate_llm_report(result)
+
+    return {
+        **result,
+        "llm_report":llm_report
+    }
+
+
+
+
 
 
