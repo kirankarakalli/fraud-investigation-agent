@@ -27,11 +27,12 @@ def prediction(transaction:TransactionInput):
         risk_level = "MEDIUM"
     else:
         risk_level = "LOW"
-
+    
     return {
     "prediction": int(prediction),
     "fraud_probability": float(probability),
-    "risk_level": risk_level
+    "risk_level": risk_level,
+
     }
 
 
