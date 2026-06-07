@@ -5,6 +5,7 @@ from src.fraud_agent.schemas.prediction_schema import PredictionResponse
 from src.fraud_agent.schemas.transaction_schema import TransactionInput
 from src.fraud_agent.services.prediction_service import prediction
 from src.fraud_agent.services.investigation_service import investigationReport
+from src.fraud_agent.agents.fraud_graph import graph
 
 
 router=APIRouter()
@@ -18,6 +19,16 @@ def predict(transaction:TransactionInput):
 def investigate(transaction:TransactionInput):
     return investigationReport(transaction)
 
+@router.post('/agent/investigate')
+def agent_investigate(transaction:TransactionInput):
+    result = graph.invoke({
+        "transaction": transaction.model_dump()
+    })
+
+    return {
+        **result["investigation_result"],
+        "llm_report": result["llm_report"]
+    }
 
 
 

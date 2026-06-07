@@ -10,4 +10,3 @@ class InvestigationResponse(BaseModel):
     risk_reason: List[str]
     investigation_summary: str
     recommended_action: str
-    llm_report: str

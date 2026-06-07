@@ -37,17 +37,11 @@ def investigationReport(transaction:TransactionInput):
             "recommended_action": "Approve transaction."
         }
     
-    result= {
+    return  {
         **predict,
         **report
     }
 
-    llm_report=generate_llm_report(result)
-
-    return {
-        **result,
-        "llm_report":llm_report
-    }
 
 
 
