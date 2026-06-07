@@ -40,6 +40,9 @@ Investigation Findings:
 Initial Recommendation:
 {recommended_action}
 
+Workflow Action: 
+{workflow_action}
+
 Generate a report with the following sections:
 
 Executive Summary:

@@ -25,9 +25,33 @@ def investigation_node(State:FraudState):
     }
 
 
-def llm_report_node(State:FraudState):
+def risk_router(State:FraudState):
+    risk_level=State['investigation_result']['risk_level']
 
-    report=generate_llm_report(State['investigation_result'])
+    if risk_level=='HIGH':
+        return 'escalate'
+    elif risk_level=="MEDIUM":
+        return 'Review'
+    else:
+        return 'approve'
+
+def approve_node(state):
+    return {"workflow_action": "AUTO_APPROVE"}
+
+def review_node(state):
+    return {"workflow_action": "MANUAL_REVIEW"}
+
+def escalate_node(state):
+    return {"workflow_action": "ESCALATE_TO_FRAUD_TEAM"}
+
+
+
+def llm_report_node(State:FraudState):
+    report_input = {
+        **State["investigation_result"],
+        "workflow_action": State["workflow_action"]
+        }
+    report=generate_llm_report(report_input)
 
     return {
         "llm_report": report
@@ -49,10 +73,25 @@ builder.add_node(
     'llm_report_node',llm_report_node
 )
 
+builder.add_node('approve_node',approve_node)
+builder.add_node('review_node',review_node)
+builder.add_node('escalate_node',escalate_node)
+
+
+
 
 builder.add_edge(START,'prediction_node')
 builder.add_edge('prediction_node','investigation_node')
-builder.add_edge('investigation_node','llm_report_node')
+builder.add_conditional_edges('investigation_node',risk_router,{
+    'approve':'approve_node',
+    'review':'review_node',
+    'escalate':'escalate_node'
+
+})
+builder.add_edge('approve_node','llm_report_node')
+builder.add_edge('review_node','llm_report_node')
+builder.add_edge('escalate_node','llm_report_node')
+
 builder.add_edge('llm_report_node',END)
 
 graph = builder.compile()
