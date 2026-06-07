@@ -1,10 +1,10 @@
-from sre_parse import State
 from langgraph.graph import START,END, StateGraph
 from src.fraud_agent.agents.state import FraudState
 from src.fraud_agent.services.prediction_service import prediction
 from src.fraud_agent.services.investigation_service import investigationReport
 from src.fraud_agent.services.llm_report_service import generate_llm_report
 from src.fraud_agent.schemas.transaction_schema import TransactionInput
+from src.fraud_agent.services.audit_log_service import save_audit_log
 
 
 def prediction_node(State:FraudState):
@@ -57,6 +57,20 @@ def llm_report_node(State:FraudState):
         "llm_report": report
     }
 
+def audit_log_node(State:FraudState):
+    llm_result = {
+        **State["investigation_result"],
+        "workflow_action": State["workflow_action"]
+        }
+
+    save_audit_log(llm_result)
+
+    return {
+        "audit_logged": True
+    }
+
+
+
 
 builder=StateGraph(FraudState)
 
@@ -76,6 +90,7 @@ builder.add_node(
 builder.add_node('approve_node',approve_node)
 builder.add_node('review_node',review_node)
 builder.add_node('escalate_node',escalate_node)
+builder.add_node('audit_log_node',audit_log_node)
 
 
 
@@ -91,8 +106,8 @@ builder.add_conditional_edges('investigation_node',risk_router,{
 builder.add_edge('approve_node','llm_report_node')
 builder.add_edge('review_node','llm_report_node')
 builder.add_edge('escalate_node','llm_report_node')
-
-builder.add_edge('llm_report_node',END)
+builder.add_edge('llm_report_node','audit_log_node')
+builder.add_edge('audit_log_node',END)
 
 graph = builder.compile()
 

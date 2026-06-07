@@ -6,3 +6,4 @@ class FraudState(TypedDict):
     investigation_result: dict
     workflow_action: str
     llm_report: str
+    audit_logged: bool

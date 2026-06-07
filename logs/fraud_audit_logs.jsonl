@@ -1,0 +1,5 @@
+{"timestamp": "2026-06-07T05:51:19.869483", "amount": 0.0, "time": 406.0, "prediction": 1, "fraud_probability": 0.7326666666666667, "risk_level": "HIGH", "workflow_action": "ESCALATE_TO_FRAUD_TEAM"}
+{"timestamp": "2026-06-07T05:54:36.365187+00:00", "amount": 0.0, "time": 406.0, "prediction": 1, "fraud_probability": 0.7326666666666667, "risk_level": "HIGH", "workflow_action": "ESCALATE_TO_FRAUD_TEAM"}
+{"timestamp": "2026-06-07T05:58:21.972743+00:00", "amount": 0.0, "time": 0.0, "prediction": 0, "fraud_probability": 5.6062912784111065e-06, "risk_level": "LOW", "workflow_action": "AUTO_APPROVE"}
+{"timestamp": "2026-06-07T06:02:52.506103+00:00", "amount": 0.0, "time": 0.0, "prediction": 0, "fraud_probability": 5.6062912784111065e-06, "risk_level": "LOW", "workflow_action": "AUTO_APPROVE"}
+{"timestamp": "2026-06-07T06:05:33.640554+00:00", "amount": 0.0, "time": 0.0, "prediction": 0, "fraud_probability": 5.6062912784111065e-06, "risk_level": "LOW", "workflow_action": "AUTO_APPROVE"}
