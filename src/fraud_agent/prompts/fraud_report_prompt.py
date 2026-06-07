@@ -43,6 +43,8 @@ Initial Recommendation:
 Workflow Action: 
 {workflow_action}
 
+If workflow_action is PENDING_HUMAN_APPROVAL, recommend manual fraud analyst approval before final decision.
+
 Generate a report with the following sections:
 
 Executive Summary:

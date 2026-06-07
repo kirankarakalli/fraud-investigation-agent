@@ -36,20 +36,21 @@ def risk_router(State:FraudState):
         return 'approve'
 
 def approve_node(state):
-    return {"workflow_action": "AUTO_APPROVE"}
+    return {"workflow_action": "AUTO_APPROVE","requires_human_review": False}
 
 def review_node(state):
-    return {"workflow_action": "MANUAL_REVIEW"}
+    return {"workflow_action": "MANUAL_REVIEW","requires_human_review": True}
 
 def escalate_node(state):
-    return {"workflow_action": "ESCALATE_TO_FRAUD_TEAM"}
+    return {"workflow_action": "PENDING_HUMAN_APPROVAL","requires_human_review": True}
 
 
 
 def llm_report_node(State:FraudState):
     report_input = {
         **State["investigation_result"],
-        "workflow_action": State["workflow_action"]
+        "workflow_action": State["workflow_action"],
+         "requires_human_review": State["requires_human_review"]
         }
     report=generate_llm_report(report_input)
 

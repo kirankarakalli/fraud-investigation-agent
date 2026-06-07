@@ -11,6 +11,8 @@ class AgentInvestigationResponse(BaseModel):
     investigation_summary: str
     recommended_action: str
     workflow_action: str
+    requires_human_review: bool
     llm_report: str
     audit_logged: bool
     audit_id: int
+    
