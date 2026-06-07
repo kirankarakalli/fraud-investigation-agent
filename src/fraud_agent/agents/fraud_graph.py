@@ -63,10 +63,11 @@ def audit_log_node(State:FraudState):
         "workflow_action": State["workflow_action"]
         }
 
-    save_audit_log(llm_result)
+    audit_id=save_audit_log(llm_result)
 
     return {
-        "audit_logged": True
+        "audit_logged": True,
+        "audit_id":audit_id
     }
 
 

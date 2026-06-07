@@ -13,3 +13,4 @@ class AgentInvestigationResponse(BaseModel):
     workflow_action: str
     llm_report: str
     audit_logged: bool
+    audit_id: int

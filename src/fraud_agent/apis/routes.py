@@ -30,7 +30,8 @@ def agent_investigate(transaction:TransactionInput):
         **result["investigation_result"],
         "workflow_action": result["workflow_action"],
         "llm_report": result["llm_report"],
-        "audit_logged": result["audit_logged"]
+        "audit_logged": result["audit_logged"],
+        "audit_id": result["audit_id"]
     }
 
 
