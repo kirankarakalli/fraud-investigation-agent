@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 from src.fraud_agent.schemas import prediction_schema
+from src.fraud_agent.schemas.HumanRequest_schema import HumanReviewRequest
+from src.fraud_agent.schemas.fraud_review import review_case
 from src.fraud_agent.schemas.investigation_schema import InvestigationResponse
 from src.fraud_agent.schemas.prediction_schema import PredictionResponse
 from src.fraud_agent.schemas.transaction_schema import TransactionInput
@@ -35,6 +37,10 @@ def agent_investigate(transaction:TransactionInput):
         "audit_id": result["audit_id"]
         
     }
+
+@router.post("/cases/{audit_id}/review")
+def review_fraud_case(audit_id: int, review: HumanReviewRequest):
+    return review_case(audit_id, review)
 
 
 
