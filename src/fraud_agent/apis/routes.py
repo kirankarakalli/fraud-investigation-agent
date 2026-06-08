@@ -46,6 +46,36 @@ def get_all_cases():
         db.close()
 
 
+@router.get("/cases/{audit_id}")
+def get_all_case_by_id(audit_id:int):
+    db = SessionLocal()
+
+    try:
+        log = db.query(AuditLog).filter(AuditLog.id==audit_id).first()
+
+        if not log:
+            return {"message": "Case not found"}
+
+        return {
+            "id": log.id,
+            "timestamp": str(log.timestamp),
+            "amount": log.amount,
+            "time": log.time,
+            "prediction": log.prediction,
+            "fraud_probability": log.fraud_probability,
+            "risk_level": log.risk_level,
+            "workflow_action": log.workflow_action,
+            "approval_status": log.approval_status,
+            "reviewed_by": log.reviewed_by,
+            "review_notes": log.review_notes,
+            "reviewed_at": str(log.reviewed_at) if log.reviewed_at else None
+        }
+
+    finally:
+        db.close()
+
+
+
 @router.post('/predict',response_model=PredictionResponse)
 def predict(transaction:TransactionInput):
     return prediction(transaction)
