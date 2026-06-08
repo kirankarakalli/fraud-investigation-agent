@@ -45,6 +45,50 @@ def get_all_cases():
     finally:
         db.close()
 
+@router.get('/cases/stats')
+def get_case_stats():
+    db = SessionLocal()
+
+    try:
+        total_cases = db.query(AuditLog).count()
+
+        pending_cases = db.query(AuditLog).filter(
+            AuditLog.approval_status == 'PENDING'
+        ).count()
+
+        approved_cases = db.query(AuditLog).filter(
+            AuditLog.approval_status == 'APPROVED'
+        ).count()
+
+        rejected_cases = db.query(AuditLog).filter(
+            AuditLog.approval_status == 'REJECTED'
+        ).count()
+
+        high_risk_cases = db.query(AuditLog).filter(
+            AuditLog.risk_level == 'HIGH'
+        ).count()
+
+        medium_risk_cases = db.query(AuditLog).filter(
+            AuditLog.risk_level == 'MEDIUM'
+        ).count()
+
+        low_risk_cases = db.query(AuditLog).filter(
+            AuditLog.risk_level == 'LOW'
+        ).count()
+
+        return {
+            'total_cases': total_cases,
+            'pending_cases': pending_cases,
+            'approved_cases': approved_cases,
+            'rejected_cases': rejected_cases,
+            'high_risk_cases': high_risk_cases,
+            'medium_risk_cases': medium_risk_cases,
+            'low_risk_cases': low_risk_cases
+        }
+
+    finally:
+        db.close()
+
 
 @router.get("/cases/{audit_id}")
 def get_all_case_by_id(audit_id:int):
@@ -73,6 +117,7 @@ def get_all_case_by_id(audit_id:int):
 
     finally:
         db.close()
+
 
 
 
