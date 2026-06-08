@@ -1,3 +1,4 @@
+import uu
 from fastapi import APIRouter
 from src.fraud_agent.database.audit_model import AuditLog
 from src.fraud_agent.schemas import prediction_schema
@@ -11,7 +12,7 @@ from src.fraud_agent.services.prediction_service import prediction
 from src.fraud_agent.services.investigation_service import investigationReport
 from src.fraud_agent.agents.fraud_graph import graph
 from src.fraud_agent.database.database import SessionLocal
-
+from uuid import uuid4
 
 router=APIRouter()
 
@@ -132,10 +133,15 @@ def investigate(transaction:TransactionInput):
 
 @router.post('/agent/investigate',response_model=AgentInvestigationResponse)
 def agent_investigate(transaction:TransactionInput):
+    config = {
+    "configurable": {
+        "thread_id": str(uuid4())
+    }
+}
     result = graph.invoke({
-        "transaction": transaction.model_dump()
-    })
-
+        "transaction": transaction.model_dump()},
+        config=config
+    )
     return {
         **result["investigation_result"],
         "workflow_action": result["workflow_action"],

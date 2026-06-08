@@ -1,3 +1,4 @@
+from joblib import memory
 from langgraph.graph import START,END, StateGraph
 from src.fraud_agent.agents.state import FraudState
 from src.fraud_agent.services.prediction_service import prediction
@@ -5,7 +6,7 @@ from src.fraud_agent.services.investigation_service import investigationReport
 from src.fraud_agent.services.llm_report_service import generate_llm_report
 from src.fraud_agent.schemas.transaction_schema import TransactionInput
 from src.fraud_agent.services.audit_log_service import save_audit_log
-
+from src.fraud_agent.agents.checkpointer import memory
 
 def prediction_node(State:FraudState):
     transaction_obj = TransactionInput(**State["transaction"])
@@ -111,5 +112,5 @@ builder.add_edge('escalate_node','llm_report_node')
 builder.add_edge('llm_report_node','audit_log_node')
 builder.add_edge('audit_log_node',END)
 
-graph = builder.compile()
+graph = builder.compile(checkpointer=memory)
 
