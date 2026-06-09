@@ -1,4 +1,3 @@
-from joblib import memory
 from langgraph.graph import START,END, StateGraph
 from src.fraud_agent.agents.state import FraudState
 from src.fraud_agent.services.prediction_service import prediction
@@ -7,6 +6,8 @@ from src.fraud_agent.services.llm_report_service import generate_llm_report
 from src.fraud_agent.schemas.transaction_schema import TransactionInput
 from src.fraud_agent.services.audit_log_service import save_audit_log
 from src.fraud_agent.agents.checkpointer import memory
+from src.fraud_agent.tools.similar_case_tool import get_similar_cases
+from src.fraud_agent.tools.fraud_rules_tool import fraud_rules_check
 
 def prediction_node(State:FraudState):
     transaction_obj = TransactionInput(**State["transaction"])
@@ -32,7 +33,7 @@ def risk_router(State:FraudState):
     if risk_level=='HIGH':
         return 'escalate'
     elif risk_level=="MEDIUM":
-        return 'Review'
+        return 'review'
     else:
         return 'approve'
 
@@ -45,11 +46,31 @@ def review_node(state):
 def escalate_node(state):
     return {"workflow_action": "PENDING_HUMAN_APPROVAL","requires_human_review": True}
 
+def fraud_rule_node(state):
 
+    alerts = fraud_rules_check(
+        Amount=state["prediction_result"]["Amount"],
+        risk_level=state["prediction_result"]["risk_level"]
+    )
+
+    return {
+        "fraud_alerts": alerts
+    }
+
+def similar_case_node(state):
+    risk_level = state["investigation_result"]["risk_level"]
+
+    result = get_similar_cases(risk_level)
+
+    return {
+        "similar_case_summary": result
+    }
 
 def llm_report_node(State:FraudState):
     report_input = {
         **State["investigation_result"],
+        "fraud_alerts": State["fraud_alerts"],
+        "similar_case_summary": State.get("similar_case_summary", {}),
         "workflow_action": State["workflow_action"],
          "requires_human_review": State["requires_human_review"]
         }
@@ -94,13 +115,16 @@ builder.add_node('approve_node',approve_node)
 builder.add_node('review_node',review_node)
 builder.add_node('escalate_node',escalate_node)
 builder.add_node('audit_log_node',audit_log_node)
-
+builder.add_node('fraud_rule_node',fraud_rule_node)
+builder.add_node("similar_case_node", similar_case_node)
 
 
 
 builder.add_edge(START,'prediction_node')
 builder.add_edge('prediction_node','investigation_node')
-builder.add_conditional_edges('investigation_node',risk_router,{
+builder.add_edge('investigation_node','fraud_rule_node')
+
+builder.add_conditional_edges('fraud_rule_node',risk_router,{
     'approve':'approve_node',
     'review':'review_node',
     'escalate':'escalate_node'
@@ -108,7 +132,15 @@ builder.add_conditional_edges('investigation_node',risk_router,{
 })
 builder.add_edge('approve_node','llm_report_node')
 builder.add_edge('review_node','llm_report_node')
-builder.add_edge('escalate_node','llm_report_node')
+builder.add_edge(
+    "escalate_node",
+    "similar_case_node"
+)
+
+builder.add_edge(
+    "similar_case_node",
+    "llm_report_node"
+)
 builder.add_edge('llm_report_node','audit_log_node')
 builder.add_edge('audit_log_node',END)
 

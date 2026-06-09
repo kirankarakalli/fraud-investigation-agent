@@ -15,4 +15,6 @@ class AgentInvestigationResponse(BaseModel):
     llm_report: str
     audit_logged: bool
     audit_id: int
+    fraud_alerts: list[str]
+    similar_case_summary: dict
     
