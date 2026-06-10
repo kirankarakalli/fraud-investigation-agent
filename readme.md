@@ -2,6 +2,10 @@
 
 An end-to-end AI-powered Fraud Investigation Agent built using FastAPI, Machine Learning, LangChain, LangGraph, SQLite, Streamlit, and Docker.
 
+## Architecture
+
+![Fraud Investigation Architecture](images/fraud_detection_pipeline.jpg)
+
 ## Features
 
 ### Fraud Detection
