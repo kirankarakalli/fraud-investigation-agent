@@ -1,18 +1,48 @@
 # Fraud Investigation Agent
 
-An end-to-end AI-powered Fraud Investigation Agent built using FastAPI, Machine Learning, LangChain, LangGraph, and SQLite.
+An end-to-end AI-powered Fraud Investigation Agent built using FastAPI, Machine Learning, LangChain, LangGraph, SQLite, Streamlit, and Docker.
 
 ## Features
 
+### Fraud Detection
+
 * Fraud Prediction using Machine Learning
+* Fraud Probability Scoring
 * Risk Classification (LOW, MEDIUM, HIGH)
-* AI-generated Investigation Reports using LLMs
+
+### Agentic AI Workflow
+
 * LangGraph-based Investigation Workflow
 * Conditional Routing based on Risk Level
-* Audit Logging with SQLite
-* Human-in-the-Loop Review Process
-* Fraud Case Management APIs
-* Investigation Analytics and Statistics
+* AI-generated Investigation Reports
+* LangGraph Checkpointing
+
+### Tool Integration
+
+* Fraud Rules Tool
+* Similar Case Lookup Tool
+
+### Human-in-the-Loop Review
+
+* Manual Approval Workflow
+* Case Review and Decision Tracking
+* Audit Trail for Investigation Decisions
+
+### Notifications
+
+* Email Notifications for High-Risk Fraud Cases
+
+### Dashboard
+
+* Streamlit Dashboard
+* Investigation Interface
+* Case Management Interface
+* Analytics Dashboard
+
+### Deployment
+
+* Dockerized Application
+* Docker Compose Support
 
 ---
 
@@ -26,36 +56,59 @@ An end-to-end AI-powered Fraud Investigation Agent built using FastAPI, Machine 
 ### Machine Learning
 
 * Scikit-learn
-* Joblib
 * Pandas
+* Joblib
 
 ### LLM & Agent Framework
 
 * LangChain
 * LangGraph
+* OpenAI GPT-4o
 
 ### Database
 
 * SQLite
 * SQLAlchemy
 
+### Frontend
+
+* Streamlit
+
+### Deployment
+
+* Docker
+* Docker Compose
+
 ---
 
 ## Workflow
 
+```text
 Transaction
 ↓
 Fraud Prediction
 ↓
 Investigation Analysis
 ↓
+Fraud Rules Tool
+↓
 Risk Routing
 
-LOW → Auto Approve
+LOW
+↓
+Auto Approve
 
-MEDIUM → Manual Review
+MEDIUM
+↓
+Manual Review
 
-HIGH → Human Approval Required
+HIGH
+↓
+Similar Case Lookup Tool
+↓
+Email Notification
+↓
+Human Approval Required
 
 ↓
 LLM Investigation Report
@@ -63,6 +116,7 @@ LLM Investigation Report
 Audit Logging
 ↓
 Case Management
+```
 
 ---
 
@@ -76,44 +130,40 @@ Case Management
 
 ### Fraud Investigation
 
-POST /agent/investigate
+#### POST /agent/investigate
 
 Analyze a transaction and generate:
 
-* Fraud prediction
-* Risk assessment
-* Investigation summary
-* LLM-generated report
-
----
+* Fraud Prediction
+* Risk Assessment
+* Investigation Summary
+* Fraud Alerts
+* Similar Case Analysis
+* AI Investigation Report
 
 ### Human Review
 
-POST /cases/{audit_id}/review
+#### POST /cases/{audit_id}/review
 
 Approve or reject high-risk fraud cases.
 
----
-
 ### Case Management
 
-GET /cases
+#### GET /cases
 
 Retrieve all fraud investigation cases.
 
-GET /cases/{audit_id}
+#### GET /cases/{audit_id}
 
 Retrieve a specific case.
 
-GET /cases?status=PENDING
+#### GET /cases?status=PENDING
 
 Filter cases by status.
 
----
-
 ### Analytics
 
-GET /cases/stats
+#### GET /cases/stats
 
 Returns:
 
@@ -139,15 +189,127 @@ Returns:
 }
 ```
 
+---
+
+## Dataset
+
+This project uses the Credit Card Fraud Detection Dataset.
+
+The original transaction features were anonymized using PCA for privacy reasons.
+
+### Model Features
+
+* Time
+* Amount
+* V1–V28 (PCA-transformed features)
+
+### Production Equivalent Features
+
+In a real-world fraud detection system, these would typically correspond to:
+
+* Customer Information
+* Merchant Details
+* Device Information
+* Transaction Type
+* Location Data
+* Behavioral Features
+
+---
+
+## Dashboard Features
+
+### Investigation Page
+
+* Submit Transactions
+* Generate Fraud Reports
+* View Investigation Results
+
+### Case Management
+
+* View All Cases
+* Filter Cases by Status
+* View Case Details
+
+### Human Review
+
+* Approve Cases
+* Reject Cases
+* Add Review Notes
+
+### Analytics
+
+* Investigation Statistics
+* Risk Distribution
+* Case Metrics
+
+---
+
+## Docker Setup
+
+### Build Docker Image
+
+```bash
+docker build -t fraud-agent .
+```
+
+### Run Docker Container
+
+```bash
+docker run -p 8000:8000 fraud-agent
+```
+
+### Docker Compose
+
+```bash
+docker compose up --build
+```
+
+### Access Services
+
+FastAPI:
+
+```text
+http://localhost:8000/docs
+```
+
+Streamlit:
+
+```text
+http://localhost:8501
+```
+
+---
+
+## Screenshots
+
+### Investigation Dashboard
+
+![Investigation Dashboard](images/dashboard.png)
+
+### Case Management
+
+![Case Management](images/cases.png)
+
+### Human Review
+
+![Human Review](images/review.png)
+
+### Analytics Dashboard
+
+![Analytics Dashboard](images/stats.png)
+
+---
+
 ## Future Enhancements
 
-* LangGraph Checkpointing
-* Agent Memory
-* Tool Calling
-* Notification System
-* Dashboard UI
+* Customer History Integration
+* External Fraud Intelligence APIs
+* Vector Database Memory
 * Multi-Agent Fraud Investigation Workflow
+* Advanced Fraud Pattern Detection
+
+---
 
 ## Author
 
-Kiran Karakalli
+**Kiran Karakalli**
