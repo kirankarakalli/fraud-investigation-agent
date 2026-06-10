@@ -1,0 +1,7 @@
+.venv
+__pycache__
+*.pyc
+.git
+.env
+fraud_memory.db
+fraud_agent.db
