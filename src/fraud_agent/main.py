@@ -3,6 +3,8 @@ from src.fraud_agent.apis.routes import router
 import uvicorn
 
 app = FastAPI(title="Banking Fraud Investigation Agent")
+
+
 app.include_router(router)
 
 @app.get('/')

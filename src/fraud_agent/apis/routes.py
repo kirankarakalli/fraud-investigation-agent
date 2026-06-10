@@ -14,14 +14,20 @@ from src.fraud_agent.agents.fraud_graph import graph
 from src.fraud_agent.database.database import SessionLocal
 from uuid import uuid4
 
-router=APIRouter()
+router=APIRouter(tags=["Banking Fraud API EndPoints"])
 
 @router.get("/cases")
-def get_all_cases():
+def get_all_cases(status: str | None = None):
     db = SessionLocal()
 
     try:
-        logs = db.query(AuditLog).all()
+        query = db.query(AuditLog)
+        if status:
+            query = query.filter(
+                AuditLog.approval_status == status.upper()
+            )
+
+        logs = query.all()
 
         return {
             "count": len(logs),
