@@ -17,4 +17,5 @@ class AgentInvestigationResponse(BaseModel):
     audit_id: int
     fraud_alerts: list[str]
     similar_case_summary: dict
+    notification_sent: bool
     

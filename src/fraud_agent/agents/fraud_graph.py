@@ -8,6 +8,7 @@ from src.fraud_agent.services.audit_log_service import save_audit_log
 from src.fraud_agent.agents.checkpointer import memory
 from src.fraud_agent.tools.similar_case_tool import get_similar_cases
 from src.fraud_agent.tools.fraud_rules_tool import fraud_rules_check
+from src.fraud_agent.tools.notification_tool import send_high_risk_notification
 
 def prediction_node(State:FraudState):
     transaction_obj = TransactionInput(**State["transaction"])
@@ -66,6 +67,17 @@ def similar_case_node(state):
         "similar_case_summary": result
     }
 
+def notification_node(state: FraudState):
+    notification_sent = send_high_risk_notification(
+        state["investigation_result"]
+    )
+
+    return {
+        "notification_sent": notification_sent
+    }
+
+
+
 def llm_report_node(State:FraudState):
     report_input = {
         **State["investigation_result"],
@@ -117,7 +129,7 @@ builder.add_node('escalate_node',escalate_node)
 builder.add_node('audit_log_node',audit_log_node)
 builder.add_node('fraud_rule_node',fraud_rule_node)
 builder.add_node("similar_case_node", similar_case_node)
-
+builder.add_node("notification_node", notification_node)
 
 
 builder.add_edge(START,'prediction_node')
@@ -132,15 +144,9 @@ builder.add_conditional_edges('fraud_rule_node',risk_router,{
 })
 builder.add_edge('approve_node','llm_report_node')
 builder.add_edge('review_node','llm_report_node')
-builder.add_edge(
-    "escalate_node",
-    "similar_case_node"
-)
-
-builder.add_edge(
-    "similar_case_node",
-    "llm_report_node"
-)
+builder.add_edge("escalate_node", "similar_case_node")
+builder.add_edge("similar_case_node", "notification_node")
+builder.add_edge("notification_node", "llm_report_node")
 builder.add_edge('llm_report_node','audit_log_node')
 builder.add_edge('audit_log_node',END)
 

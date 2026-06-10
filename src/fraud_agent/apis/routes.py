@@ -154,6 +154,7 @@ def agent_investigate(transaction:TransactionInput):
         "requires_human_review": result["requires_human_review"],
         "fraud_alerts": result["fraud_alerts"],
         "similar_case_summary": result.get("similar_case_summary", {}),
+        "notification_sent": result.get("notification_sent", False),
         "llm_report": result["llm_report"],
         "audit_logged": result["audit_logged"],
         "audit_id": result["audit_id"]

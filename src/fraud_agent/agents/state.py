@@ -7,6 +7,7 @@ class FraudState(TypedDict):
     fraud_alerts: list[str]
     workflow_action: str
     requires_human_review: bool
+    notification_sent: bool
     llm_report: str
     audit_logged: bool
     audit_id: int
